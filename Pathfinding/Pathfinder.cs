@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pathfinding
 {
@@ -13,32 +14,29 @@ namespace Pathfinding
         // TODO: improve
         public List<Tile> GetNeighbors(int x, int y, bool walls = false)
         {
-            Tile tile = map.Tiles[x, y];
             List<Tile> neighbors = new List<Tile>();
-            if (map.IsWithinBounds(x - 1, y) && !(walls && map.Tiles[x - 1, y].Blocked))
+            for (int i = x - 1; i <= x + 1; i++)
             {
-                neighbors.Add(map.Tiles[x - 1, y]);
+                for (int j = y - 1; j <= y + 1; j++)
+                {
+                    if (map.IsWithinBounds(i, j)
+                    && !(walls && map.Tiles[i, j].Blocked))
+                    {
+                        neighbors.Add(map.Tiles[i, j]);
+                    }
+                }
             }
-            if (map.IsWithinBounds(x + 1, y) && !(walls && map.Tiles[x + 1, y].Blocked))
-            {
-                neighbors.Add(map.Tiles[x + 1, y]);
-            }
-            if (map.IsWithinBounds(x, y + 1) && !(walls && map.Tiles[x, y + 1].Blocked))
-            {
-                neighbors.Add(map.Tiles[x, y + 1]);
-            }
-            if (map.IsWithinBounds(x, y - 1) && !(walls && map.Tiles[x, y - 1].Blocked))
-            {
-                neighbors.Add(map.Tiles[x, y - 1]);
-            }
-            return neighbors;
+            neighbors.Remove(map.Tiles[x, y]);
+            return PrioritizeDiagonals(neighbors, x, y);
         }
 
-        public Dictionary<Tile, Tile> TravelDic(int x, int y)
+        public Dictionary<Tile, Tile> TravelDic(int x, int y, int goalX, int goalY)
         {
             Queue<Tile> frontier = new Queue<Tile>();
             Tile start = map.Tiles[x, y];
             frontier.Enqueue(start);
+            Tile goal = map.Tiles[goalX, goalY];
+            bool found = false;
             
             // <current, came_from>
             Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
@@ -46,7 +44,13 @@ namespace Pathfinding
 
             while(frontier.Count > 0)
             {
-                Tile current = frontier.Dequeue();
+                Tile current =
+                    !found ? frontier.Dequeue()
+                    : frontier.Where(t => t == goal).First();
+                if (current == goal)
+                {
+                    break;
+                }
                 List<Tile> neighbors = GetNeighbors(current.X, current.Y, true);
                 foreach (var next in neighbors)
                 {
@@ -54,6 +58,11 @@ namespace Pathfinding
                     {
                         frontier.Enqueue(next);
                         cameFrom[next] = current;
+                        if (next == goal)
+                        {
+                            found = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -64,7 +73,7 @@ namespace Pathfinding
         {
             Tile start = map.Tiles[x, y];
             Tile goal = map.Tiles[goalX, goalY];
-            Dictionary<Tile, Tile> travelDic = TravelDic(x, y);
+            Dictionary<Tile, Tile> travelDic = TravelDic(x, y, goalX, goalY);
             LinkedList<Tile> path = new LinkedList<Tile>();
             Tile current = goal;
             path.AddLast(current);
@@ -75,6 +84,25 @@ namespace Pathfinding
             }
             Path finalPath = new Path(path);
             return finalPath;
+        }
+
+        private List<Tile> PrioritizeDiagonals(List<Tile> tiles, int x, int y)
+        {
+            List<Tile> newTiles = new List<Tile>();
+            var groups = tiles
+                .GroupBy(t => t.X != x && t.Y != y)
+                .OrderBy(g => g.Key == true)
+                .Select(g => g.ToList());
+            if (groups.Count() > 1)
+            {
+                newTiles = groups.ElementAt(1).Concat(groups.ElementAt(0)).ToList();
+                return newTiles;
+            }
+            else
+            {
+                return tiles;
+            }
+
         }
     }
 }
