@@ -1,6 +1,6 @@
 namespace Pathfinding
 {
-    public class Tile
+    public class Tile : ITile
     {
         public int X { get; private set; }
         public int Y { get; private set;}

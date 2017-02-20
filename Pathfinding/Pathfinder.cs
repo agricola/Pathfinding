@@ -1,58 +1,37 @@
 using System.Collections.Generic;
-using System.Linq;
 using System;
 
 namespace Pathfinding
 {
     public class Pathfinder
     {
-        private readonly Map map;
-        public Pathfinder(Map map)
+        private readonly IMap map;
+        public Pathfinder(IMap map)
         {
             this.map = map;
         }
 
-        // TODO: improve
-        public List<Tile> GetNeighbors(int x, int y, bool walls = false)
+        public Dictionary<ITile, ITile> TravelDic(int x, int y, int goalX, int goalY)
         {
-            List<Tile> neighbors = new List<Tile>();
-            for (int i = x - 1; i <= x + 1; i++)
-            {
-                for (int j = y - 1; j <= y + 1; j++)
-                {
-                    if (map.IsWithinBounds(i, j)
-                    && !(walls && map.Tiles[i, j].Blocked))
-                    {
-                        neighbors.Add(map.Tiles[i, j]);
-                    }
-                }
-            }
-            neighbors.Remove(map.Tiles[x, y]);
-            return PrioritizeDiagonals(neighbors, x, y);
-        }
-
-        public Dictionary<Tile, Tile> TravelDic(int x, int y, int goalX, int goalY)
-        {
-            PriorityQueue<Tile> frontier = new PriorityQueue<Tile>();
-            Tile start = map.Tiles[x, y];
+            PriorityQueue<ITile> frontier = new PriorityQueue<ITile>();
+            ITile start = map.Tiles[x, y];
             frontier.Enqueue(start, 0);
-            Tile goal = map.Tiles[goalX, goalY];
-            bool found = false;
+            ITile goal = map.Tiles[goalX, goalY];
             
             // <current, came_from>
-            Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
+            Dictionary<ITile, ITile> cameFrom = new Dictionary<ITile, ITile>();
             cameFrom[start] = null;
-            Dictionary<Tile, int> costSoFar = new Dictionary<Tile, int>();
+            Dictionary<ITile, int> costSoFar = new Dictionary<ITile, int>();
             costSoFar[start] = 0;
 
             while(frontier.Count > 0)
             {
-                Tile current = frontier.Dequeue();
+                ITile current = frontier.Dequeue();
                 if (current == goal)
                 {
                     break;
                 }
-                List<Tile> neighbors = GetNeighbors(current.X, current.Y, true);
+                List<ITile> neighbors = map.GetNeighbors(current.X, current.Y);
                 foreach (var next in neighbors)
                 {
                     int cost = costSoFar[current] + 1;
@@ -74,11 +53,11 @@ namespace Pathfinding
 
         public Path GetPath(int x, int y, int goalX, int goalY)
         {
-            Tile start = map.Tiles[x, y];
-            Tile goal = map.Tiles[goalX, goalY];
-            Dictionary<Tile, Tile> travelDic = TravelDic(x, y, goalX, goalY);
-            LinkedList<Tile> path = new LinkedList<Tile>();
-            Tile current = goal;
+            ITile start = map.Tiles[x, y];
+            ITile goal = map.Tiles[goalX, goalY];
+            Dictionary<ITile, ITile> travelDic = TravelDic(x, y, goalX, goalY);
+            LinkedList<ITile> path = new LinkedList<ITile>();
+            ITile current = goal;
             path.AddLast(current);
             while (current != start)
             {
@@ -89,26 +68,7 @@ namespace Pathfinding
             return finalPath;
         }
 
-        private List<Tile> PrioritizeDiagonals(List<Tile> tiles, int x, int y)
-        {
-            List<Tile> newTiles = new List<Tile>();
-            var groups = tiles
-                .GroupBy(t => t.X != x && t.Y != y)
-                .OrderBy(g => g.Key == true)
-                .Select(g => g.ToList());
-            if (groups.Count() > 1)
-            {
-                newTiles = groups.ElementAt(1).Concat(groups.ElementAt(0)).ToList();
-                return newTiles;
-            }
-            else
-            {
-                return tiles;
-            }
-
-        }
-
-        private int Heuristic(Tile current, Tile goal)
+        private int Heuristic(ITile current, ITile goal)
         {
             return Math.Abs((int)current.X - (int)goal.X)
                 + Math.Abs((int)current.Y - (int)goal.Y);
