@@ -5,8 +5,6 @@ It is meant to be for turn-based, square tile games. It can work with hex grids 
 
 Made it based off A* tutorial on RedBlogGames and Roguesharp pathfinding
 
-Currently, all movement has the same cost, including diagonals.
-
 How to use:
 
     1. Setup a tile and map class that use the IMap and ITile interfaces

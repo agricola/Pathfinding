@@ -34,7 +34,7 @@ namespace Pathfinding
                 List<ITile> neighbors = map.GetNeighbors(current.X, current.Y);
                 foreach (var next in neighbors)
                 {
-                    int cost = costSoFar[current] + 1;
+                    int cost = costSoFar[current] + next.MovementCost;
                     if (!cameFrom.ContainsValue(next) || cost < costSoFar[next])
                     {
                         costSoFar[next] = cost;
