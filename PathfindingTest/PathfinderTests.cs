@@ -1,5 +1,6 @@
 using Xunit;
 using System.Collections.Generic;
+using System;
 
 namespace Pathfinding.Tests
 {
@@ -54,7 +55,7 @@ namespace Pathfinding.Tests
             Map map = new Map(10, 10);
             Pathfinder pathfinder = new Pathfinder(map);
             var travelDic0 = pathfinder.TravelDic(2, 2, 9, 9);
-            Assert.Equal(98, travelDic0.Count);
+            Assert.True(98 > travelDic0.Count);
             var travelDic1 = pathfinder.TravelDic(2, 2, 2, 1);
             Assert.Equal(7, travelDic1.Count);
         }
@@ -72,7 +73,7 @@ namespace Pathfinding.Tests
         }
         
         [Fact]
-        public void BFSNavigates()
+        public void AStarNavigatesEfficiently()
         {
             Map map = new Map(5, 5);
             map.Tiles[1, 0].Blocked = true;
@@ -88,7 +89,7 @@ namespace Pathfinding.Tests
             List<Tile> testPathList = new List<Tile>()
             {
                 map.Tiles[0,0], map.Tiles[0,1], map.Tiles[0,2],
-                map.Tiles[0,3], map.Tiles[1,4],
+                map.Tiles[0,3], map.Tiles[1,4], map.Tiles[2,4],
                 map.Tiles[2,3], map.Tiles[2,2], map.Tiles[2,1],
                 map.Tiles[3,0], map.Tiles[4,1], map.Tiles[4,2],
                 map.Tiles[4,3], map.Tiles[4,4]

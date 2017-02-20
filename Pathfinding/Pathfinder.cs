@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Pathfinding
 {
@@ -32,21 +33,21 @@ namespace Pathfinding
 
         public Dictionary<Tile, Tile> TravelDic(int x, int y, int goalX, int goalY)
         {
-            Queue<Tile> frontier = new Queue<Tile>();
+            PriorityQueue<Tile> frontier = new PriorityQueue<Tile>();
             Tile start = map.Tiles[x, y];
-            frontier.Enqueue(start);
+            frontier.Enqueue(start, 0);
             Tile goal = map.Tiles[goalX, goalY];
             bool found = false;
             
             // <current, came_from>
             Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
             cameFrom[start] = null;
+            Dictionary<Tile, int> costSoFar = new Dictionary<Tile, int>();
+            costSoFar[start] = 0;
 
             while(frontier.Count > 0)
             {
-                Tile current =
-                    !found ? frontier.Dequeue()
-                    : frontier.Where(t => t == goal).First();
+                Tile current = frontier.Dequeue();
                 if (current == goal)
                 {
                     break;
@@ -54,13 +55,15 @@ namespace Pathfinding
                 List<Tile> neighbors = GetNeighbors(current.X, current.Y, true);
                 foreach (var next in neighbors)
                 {
-                    if (!cameFrom.ContainsValue(next))
+                    int cost = costSoFar[current] + 1;
+                    if (!cameFrom.ContainsValue(next) || cost < costSoFar[next])
                     {
-                        frontier.Enqueue(next);
+                        costSoFar[next] = cost;
+                        int priority = cost + Heuristic(goal, next);
+                        frontier.Enqueue(next, priority);
                         cameFrom[next] = current;
-                        if (next == goal)
+                        if (goal == next)
                         {
-                            found = true;
                             break;
                         }
                     }
@@ -103,6 +106,12 @@ namespace Pathfinding
                 return tiles;
             }
 
+        }
+
+        private int Heuristic(Tile current, Tile goal)
+        {
+            return Math.Abs((int)current.X - (int)goal.X)
+                + Math.Abs((int)current.Y - (int)goal.Y);
         }
     }
 }
