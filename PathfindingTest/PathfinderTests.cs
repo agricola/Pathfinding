@@ -127,5 +127,17 @@ namespace Pathfinding.Tests
             Assert.True(!path.Advance());
             Assert.Equal(path.Current.Value, map.Tiles[1,1]);
         }
+
+        [Fact]
+        public void ReturnsNullWhenNoPath()
+        {
+            TileMap map = new TileMap(4, 4);
+            map.Tiles[1, 0].Blocked = true;
+            map.Tiles[0, 1].Blocked = true;
+            map.Tiles[1, 1].Blocked = true;
+            Pathfinder pathfinder = new Pathfinder(map);
+            Path path = pathfinder.GetPath(0, 0, 2, 2);
+            Assert.Equal(null, path);
+        }
     }
 }

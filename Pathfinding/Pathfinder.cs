@@ -61,8 +61,15 @@ namespace Pathfinding
             path.AddLast(current);
             while (current != start)
             {
-                current = travelDic[current];
-                path.AddFirst(current);
+                try
+                {
+                    current = travelDic[current];
+                    path.AddFirst(current);
+                }
+                catch (KeyNotFoundException)
+                {
+                    return null;
+                }
             }
             Path finalPath = new Path(path);
             return finalPath;
