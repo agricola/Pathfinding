@@ -2,17 +2,17 @@ using System.Collections.Generic;
 
 namespace Pathfinding
 {
-    public class Map : IMap
+    public class TileMap : ITileMap
     {
         public int Height { get; private set; }
         public int Width { get; private set; }
         public ITile[,] Tiles { get; private set; }
 
-        public Map(int width, int height)
+        public TileMap(int width, int height)
         {
             Height = height;
             Width = width;
-            Tiles = GenerateTiles(Width, Height);
+            Tiles = GenerateTiles(width, height);
         }
 
         public bool IsWithinBounds(int x, int y)
@@ -39,12 +39,12 @@ namespace Pathfinding
 
         private Tile[,] GenerateTiles(int width, int height)
         {
-            Tile[,] tiles = new Tile[Width, Height];
+            Tile[,] tiles = new Tile[width, height];
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Tile tile = new Tile(i, j , false);
+                    Tile tile = new Tile(i, j);
                     tiles[i,j] = tile;
                 }
             }

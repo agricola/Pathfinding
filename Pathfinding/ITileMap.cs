@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Pathfinding
 {
-    public interface IMap
+    public interface ITileMap
     {
         int Height { get; }
         int Width { get;}

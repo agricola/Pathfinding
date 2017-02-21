@@ -9,7 +9,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void GetsRightNumberOfNeighbors()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Pathfinder pathfinder = new Pathfinder(map);
             List<ITile> tiles = map.GetNeighbors(2, 2);
             Assert.Equal(8, tiles.Count);
@@ -18,7 +18,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void GetsRightNeighbors()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Pathfinder pathfinder = new Pathfinder(map);
             List<ITile> tiles = map.GetNeighbors(2, 2);
             Assert.NotEqual(tiles[0], tiles[1]);
@@ -29,7 +29,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void GetsRightNeighborsWithWalls()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             ITile bad = map.Tiles[2, 1];
             bad.Blocked = true;
             Pathfinder pathfinder = new Pathfinder(map);
@@ -41,7 +41,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void GetsRightNeighborsOnEdgeOfMap()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Pathfinder pathfinder = new Pathfinder(map);
             List<ITile> tiles = map.GetNeighbors(0, 0);
             Assert.Equal(3, tiles.Count);
@@ -52,7 +52,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void ExitsEarlyIfGoalFound()
         {
-            Map map = new Map(10, 10);
+            TileMap map = new TileMap(10, 10);
             Pathfinder pathfinder = new Pathfinder(map);
             var travelDic0 = pathfinder.TravelDic(2, 2, 9, 9);
             Assert.True(98 > travelDic0.Count);
@@ -63,7 +63,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void VisitsEveryTileThatIsntAWall()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             map.Tiles[0, 0].Blocked = true;
             map.Tiles[1, 0].Blocked = true;
             map.Tiles[4, 4].Blocked = true;
@@ -75,7 +75,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void AStarNavigatesEfficiently()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             map.Tiles[1, 0].Blocked = true;
             map.Tiles[1, 1].Blocked = true;
             map.Tiles[1, 2].Blocked = true;
@@ -92,7 +92,7 @@ namespace Pathfinding.Tests
             List<ITile> testPathList = new List<ITile>()
             {
                 map.Tiles[0,0], map.Tiles[0,1], map.Tiles[0,2],
-                map.Tiles[0,3], map.Tiles[1,4], map.Tiles[2,4],
+                map.Tiles[0,3], map.Tiles[1,4],
                 map.Tiles[2,3], map.Tiles[2,2], map.Tiles[2,1],
                 map.Tiles[3,0], map.Tiles[4,1], map.Tiles[4,2],
                 map.Tiles[4,3], map.Tiles[4,4]
@@ -107,7 +107,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void AstarIsFast()
         {
-            Map map = new Map(1000, 1000);
+            TileMap map = new TileMap(1000, 1000);
             Stopwatch stopwatch = Stopwatch.StartNew();
             Pathfinder pathfinder = new Pathfinder(map);
             Path path = pathfinder.GetPath(0, 0, 999, 999);
@@ -118,7 +118,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void AdvanceWorks()
         {
-            Map map = new Map(4, 4);
+            TileMap map = new TileMap(4, 4);
             Pathfinder pathfinder = new Pathfinder(map);
             Path path = pathfinder.GetPath(0, 0, 1, 1);
             Assert.Equal(path.Current.Value, map.Tiles[0,0]);

@@ -27,14 +27,14 @@ namespace Pathfinding.Tests
         [Fact]
         public void MapConstructorWorks()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Assert.True(map.Tiles.Length == 25);
         }
 
         [Fact]
         public void TilesAreNotNull()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Assert.True(map.Tiles[0, 0] != null);  
             Assert.True(map.Tiles[4, 4] != null);  
         }
@@ -42,7 +42,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void CanBlockTiles()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Assert.True(map.Tiles[0, 0].Blocked == false);
             map.Tiles[0, 0].Blocked = true;
             Assert.True(map.Tiles[0, 0].Blocked == true);
@@ -55,7 +55,7 @@ namespace Pathfinding.Tests
         [Fact]
         public void ChecksTileAreWithinMapBoundsProperly()
         {
-            Map map = new Map(5, 5);
+            TileMap map = new TileMap(5, 5);
             Assert.True(map.IsWithinBounds(5, 5) == false);
             Assert.True(map.IsWithinBounds(1, 1) == true);
         }

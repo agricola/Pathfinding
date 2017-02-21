@@ -5,8 +5,8 @@ namespace Pathfinding
 {
     public class Pathfinder
     {
-        private readonly IMap map;
-        public Pathfinder(IMap map)
+        private readonly ITileMap map;
+        public Pathfinder(ITileMap map)
         {
             this.map = map;
         }
@@ -35,7 +35,7 @@ namespace Pathfinding
                 foreach (var next in neighbors)
                 {
                     int cost = costSoFar[current] + next.MovementCost;
-                    if (!cameFrom.ContainsValue(next) || cost < costSoFar[next])
+                    if (!costSoFar.ContainsKey(next) || cost < costSoFar[next])
                     {
                         costSoFar[next] = cost;
                         int priority = cost + Heuristic(goal, next);

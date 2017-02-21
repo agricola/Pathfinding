@@ -7,7 +7,7 @@ Made it based off A* tutorial on RedBlogGames and Roguesharp pathfinding
 
 How to use:
 
-    1. Setup a tile and map class that use the IMap and ITile interfaces
+    1. Setup a Tile and TileMap class that use the ITileMap and ITile interfaces
     
     2. Create an instance of Pathfinder and then run the GetPath method which will give you a Path instance
     
